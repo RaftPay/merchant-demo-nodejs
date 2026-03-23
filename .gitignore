@@ -1,0 +1,18 @@
+# 真实配置（含密钥，禁止提交）
+config.js
+
+# 依赖
+node_modules/
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# 日志
+*.log
