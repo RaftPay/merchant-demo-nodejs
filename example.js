@@ -60,10 +60,13 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
             amount: '100',
             currency: 'PKR',
             payType: 'JAZZCASH',
+            payerMobile: '03001234567',
+            payerEmail: 'test@example.com',
+            payerName: 'Test User',
+            customerIp: '1.2.3.4',
             notifyUrl: config.notifyUrl,
             returnUrl: config.returnUrl || '',
             description: 'Test deposit',
-            // payerMobile: '03001234567',  // 选填
         });
         if (result.result === 0) {
             const data = result.data;
@@ -82,9 +85,44 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
     console.log();
 
     // ============================================================
-    // 3. 创建代付订单（手机钱包 MWALLET）
+    // 2b. 创建代收订单（直连模式）
     // ============================================================
-    console.log('========== 3. 创建代付订单 (MWALLET) ==========');
+    console.log('========== 2b. 创建代收订单（直连模式） ==========');
+    const directOrderNo = 'DEP' + Date.now() + randomSuffix() + 'D';
+    try {
+        const result = await client.createDeposit({
+            merchantOrderNo: directOrderNo,
+            amount: '100',
+            currency: 'PKR',
+            payType: 'JAZZCASH',
+            payerMobile: '03001234567',
+            payerEmail: 'test@example.com',
+            payerName: 'Test User',
+            customerIp: '1.2.3.4',
+            notifyUrl: config.notifyUrl,
+            returnUrl: config.returnUrl || '',
+            description: 'Test deposit - direct mode',
+            directMode: 1,
+        });
+        if (result.result === 0) {
+            const data = result.data;
+            const s = statusMap[data.status] || '未知';
+            console.log('订单创建成功! (直连模式，无收银台链接)');
+            console.log(`平台订单号: ${data.orderId}`);
+            console.log(`商户订单号: ${data.merchantOrderNo}`);
+            console.log(`订单状态:   ${data.status} (${s})`);
+        } else {
+            console.log(`创建失败: ${result.message} (code: ${result.result})`);
+        }
+    } catch (e) {
+        console.log(`异常: ${e.message}`);
+    }
+    console.log();
+
+    // ============================================================
+    // 4. 创建代付订单（手机钱包 MWALLET）
+    // ============================================================
+    console.log('========== 4. 创建代付订单 (MWALLET) ==========');
     const payoutOrderNo = 'WDR' + Date.now() + randomSuffix();
     try {
         const result = await client.createPayout({
@@ -96,6 +134,7 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
             payerMobile: '03001234567',
             accountNumber: '03001234567',
             accountName: 'Test User',
+            customerIp: '1.2.3.4',
             notifyUrl: config.notifyUrl,
             description: 'Test payout - wallet',
         });
@@ -114,9 +153,9 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
     console.log();
 
     // ============================================================
-    // 4. 创建代付订单（银行转账 IBFT）
+    // 5. 创建代付订单（银行转账 IBFT）
     // ============================================================
-    console.log('========== 4. 创建代付订单 (IBFT) ==========');
+    console.log('========== 5. 创建代付订单 (IBFT) ==========');
     const ibftOrderNo = 'WDR' + Date.now() + randomSuffix() + 'B';
     try {
         const result = await client.createPayout({
@@ -128,6 +167,7 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
             accountNumber: '1234567890123',
             accountName: 'Test User',
             bankCode: 'HBL',
+            customerIp: '1.2.3.4',
             notifyUrl: config.notifyUrl,
             description: 'Test payout - bank transfer',
         });
@@ -146,9 +186,9 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
     console.log();
 
     // ============================================================
-    // 5. 查询订单状态
+    // 6. 查询订单状态
     // ============================================================
-    console.log('========== 5. 查询订单状态 ==========');
+    console.log('========== 6. 查询订单状态 ==========');
     try {
         const result = await client.queryOrderStatus(depositOrderNo);
         if (result.result === 0) {

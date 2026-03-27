@@ -27,10 +27,11 @@ node example.js
 | # | 接口 | 方法 |
 |---|------|------|
 | 1 | 代收订单创建 | `await client.createDeposit(params)` |
-| 2 | 代付订单创建 | `await client.createPayout(params)` |
-| 3 | 订单状态查询 | `await client.queryOrderStatus(merchantOrderNo)` |
-| 4 | 余额查询 | `await client.queryBalance()` |
-| 5 | 回调通知处理 | 部署 `callback.js` |
+| 2 | 代收订单创建（直连） | `await client.createDeposit(params)` + `directMode=1` |
+| 3 | 代付订单创建 | `await client.createPayout(params)` |
+| 4 | 订单状态查询 | `await client.queryOrderStatus(merchantOrderNo)` |
+| 5 | 余额查询 | `await client.queryBalance()` |
+| 6 | 回调通知处理 | 部署 `callback.js` |
 
 ## 集成到你的项目
 
