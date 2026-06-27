@@ -26,8 +26,8 @@ node example.js
 
 | # | 接口 | 方法 |
 |---|------|------|
-| 1 | 代收订单创建 | `await client.createDeposit(params)` |
-| 2 | 代收订单创建（直连） | `await client.createDeposit(params)` + `directMode=1` |
+| 1 | 代收订单创建（推荐直连） | `await client.createDeposit(params)` + `directMode=1` |
+| 2 | 代收订单创建（收银台模式，可选） | `await client.createDeposit(params)` + `directMode=0` |
 | 3 | 代付订单创建 | `await client.createPayout(params)` |
 | 4 | 订单状态查询 | `await client.queryOrderStatus(merchantOrderNo)` |
 | 5 | 余额查询 | `await client.queryBalance()` |
@@ -47,7 +47,10 @@ const result = await client.createDeposit({
     merchantOrderNo: 'YOUR_ORDER_NO',
     amount: '100',
     currency: 'PKR',
+    payType: 'JAZZCASH',
+    payerMobile: '03001234567',
     notifyUrl: 'https://your-domain.com/callback',
+    directMode: 1,
 });
 
 // 查询余额

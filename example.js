@@ -50,48 +50,13 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
     console.log();
 
     // ============================================================
-    // 2. 创建代收订单
+    // 2. 创建代收订单（推荐直连模式）
     // ============================================================
-    console.log('========== 2. 创建代收订单 ==========');
+    console.log('========== 2. 创建代收订单（推荐直连模式） ==========');
     const depositOrderNo = 'DEP' + Date.now() + randomSuffix();
     try {
         const result = await client.createDeposit({
             merchantOrderNo: depositOrderNo,
-            amount: '100',
-            currency: 'PKR',
-            payType: 'JAZZCASH',
-            payerMobile: '03001234567',
-            payerEmail: 'test@example.com',
-            payerName: 'Test User',
-            customerIp: '1.2.3.4',
-            notifyUrl: config.notifyUrl,
-            returnUrl: config.returnUrl || '',
-            description: 'Test deposit',
-        });
-        if (result.result === 0) {
-            const data = result.data;
-            const s = statusMap[data.status] || '未知';
-            console.log('订单创建成功!');
-            console.log(`平台订单号: ${data.orderId}`);
-            console.log(`商户订单号: ${data.merchantOrderNo}`);
-            console.log(`收银台链接: ${data.payUrl}`);
-            console.log(`订单状态:   ${data.status} (${s})`);
-        } else {
-            console.log(`创建失败: ${result.message} (code: ${result.result})`);
-        }
-    } catch (e) {
-        console.log(`异常: ${e.message}`);
-    }
-    console.log();
-
-    // ============================================================
-    // 2b. 创建代收订单（直连模式）
-    // ============================================================
-    console.log('========== 2b. 创建代收订单（直连模式） ==========');
-    const directOrderNo = 'DEP' + Date.now() + randomSuffix() + 'D';
-    try {
-        const result = await client.createDeposit({
-            merchantOrderNo: directOrderNo,
             amount: '100',
             currency: 'PKR',
             payType: 'JAZZCASH',
@@ -107,9 +72,45 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
         if (result.result === 0) {
             const data = result.data;
             const s = statusMap[data.status] || '未知';
-            console.log('订单创建成功! (直连模式，无收银台链接)');
+            console.log('订单创建成功! (推荐直连模式，无收银台链接)');
             console.log(`平台订单号: ${data.orderId}`);
             console.log(`商户订单号: ${data.merchantOrderNo}`);
+            console.log(`订单状态:   ${data.status} (${s})`);
+        } else {
+            console.log(`创建失败: ${result.message} (code: ${result.result})`);
+        }
+    } catch (e) {
+        console.log(`异常: ${e.message}`);
+    }
+    console.log();
+
+    // ============================================================
+    // 2b. 创建代收订单（收银台模式，可选）
+    // ============================================================
+    console.log('========== 2b. 创建代收订单（收银台模式，可选） ==========');
+    const cashierOrderNo = 'DEP' + Date.now() + randomSuffix() + 'C';
+    try {
+        const result = await client.createDeposit({
+            merchantOrderNo: cashierOrderNo,
+            amount: '100',
+            currency: 'PKR',
+            payType: 'JAZZCASH',
+            payerMobile: '03001234567',
+            payerEmail: 'test@example.com',
+            payerName: 'Test User',
+            customerIp: '1.2.3.4',
+            notifyUrl: config.notifyUrl,
+            returnUrl: config.returnUrl || '',
+            description: 'Test deposit - cashier mode',
+            directMode: 0,
+        });
+        if (result.result === 0) {
+            const data = result.data;
+            const s = statusMap[data.status] || '未知';
+            console.log('订单创建成功! (收银台模式)');
+            console.log(`平台订单号: ${data.orderId}`);
+            console.log(`商户订单号: ${data.merchantOrderNo}`);
+            console.log(`收银台链接: ${data.payUrl}`);
             console.log(`订单状态:   ${data.status} (${s})`);
         } else {
             console.log(`创建失败: ${result.message} (code: ${result.result})`);
@@ -132,8 +133,6 @@ const statusMap = { 0: '待支付', 1: '处理中', 2: '成功', 3: '失败' };
             payoutMethod: 'MWALLET',
             payType: 'JAZZCASH',
             payerMobile: '03001234567',
-            accountNumber: '03001234567',
-            accountName: 'Test User',
             customerIp: '1.2.3.4',
             notifyUrl: config.notifyUrl,
             description: 'Test payout - wallet',
